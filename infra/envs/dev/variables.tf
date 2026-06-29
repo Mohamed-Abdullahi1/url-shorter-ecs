@@ -37,3 +37,8 @@ variable "tags" {
     ManagedBy   = "Terraform"
   }
 }
+
+variable "db_password" {
+  type      = string
+  sensitive = true
+}
