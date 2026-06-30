@@ -27,3 +27,11 @@ module "rds" {
 
   tags = var.tags
 }
+
+module "sqs" {
+  source = "../../modules/sqs"
+
+  project_name = var.project_name
+
+  tags = var.tags
+}
