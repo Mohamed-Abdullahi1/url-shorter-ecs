@@ -20,4 +20,4 @@ USER user
 
 EXPOSE 8081
 
-CMD [ "./worker" ]
+CMD [ "./dashboard" ]
