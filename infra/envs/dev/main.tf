@@ -46,3 +46,10 @@ module "redis" {
 
   tags = var.tags
 }
+
+module "ecs" {
+  source = "../../modules/ecs"
+
+  project_name = var.project_name
+  tags         = var.tags
+}
