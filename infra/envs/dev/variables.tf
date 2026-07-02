@@ -25,7 +25,7 @@ variable "availability_zones" {
 
 variable "repository_names" {
   type    = list(string)
-  default = ["api"]
+  default = ["api", "worker", "dashboard"]
 }
 
 variable "tags" {
@@ -41,4 +41,10 @@ variable "tags" {
 variable "db_password" {
   type      = string
   sensitive = true
+}
+
+variable "db_username" {
+  description = "Username for the PostgreSQL database"
+  type        = string
+  default     = "postgres"
 }

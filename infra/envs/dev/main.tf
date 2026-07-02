@@ -51,5 +51,18 @@ module "ecs" {
   source = "../../modules/ecs"
 
   project_name = var.project_name
-  tags         = var.tags
+
+  api_image       = "${module.ecr.repository_urls["api"]}:latest"
+  worker_image    = "${module.ecr.repository_urls["worker"]}:latest"
+  dashboard_image = "${module.ecr.repository_urls["dashboard"]}:latest"
+
+  db_address  = module.rds.db_address
+  db_name     = module.rds.db_name
+  db_username = var.db_username
+  db_password = var.db_password
+
+  sqs_queue_url  = module.sqs.queue_url
+  redis_endpoint = module.redis.redis_endpoint
+
+  tags = var.tags
 }
