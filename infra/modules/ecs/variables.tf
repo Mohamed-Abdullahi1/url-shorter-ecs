@@ -61,3 +61,11 @@ variable "base_url" {
   type    = string
   default = "http://localhost"
 }
+
+variable "vpc_id" {
+  type = string
+}
+
+variable "private_subnet_ids" {
+  type = list(string)
+}

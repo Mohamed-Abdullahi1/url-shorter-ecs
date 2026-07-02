@@ -64,5 +64,8 @@ module "ecs" {
   sqs_queue_url  = module.sqs.queue_url
   redis_endpoint = module.redis.redis_endpoint
 
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+
   tags = var.tags
 }
