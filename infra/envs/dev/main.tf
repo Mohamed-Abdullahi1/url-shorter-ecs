@@ -87,3 +87,24 @@ module "alb" {
 
   tags = var.tags
 }
+
+module "acm" {
+  source = "../../modules/acm"
+
+  domain_name = var.domain_name
+
+  tags = var.tags
+}
+
+module "route53" {
+  source = "../../modules/route53"
+
+  domain_name               = var.domain_name
+  certificate_arn           = module.acm.certificate_arn
+  domain_validation_options = module.acm.domain_validation_options
+
+  alb_dns_name = module.alb.alb_dns_name
+  alb_zone_id  = module.alb.alb_zone_id
+
+  tags = var.tags
+}

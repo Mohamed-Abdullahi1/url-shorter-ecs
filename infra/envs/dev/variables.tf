@@ -48,3 +48,9 @@ variable "db_username" {
   type        = string
   default     = "postgres"
 }
+
+variable "domain_name" {
+  description = "Domain name for the application"
+  type        = string
+  default     = "url.moabdullahi.uk"
+}
