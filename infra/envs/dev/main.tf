@@ -70,6 +70,9 @@ module "ecs" {
   alb_security_group_id = module.alb.alb_security_group_id
   api_target_group_arn  = module.alb.api_target_group_arn
 
+  rds_security_group_id   = module.rds.security_group_id
+  redis_security_group_id = module.redis.security_group_id
+
   tags = var.tags
 }
 
