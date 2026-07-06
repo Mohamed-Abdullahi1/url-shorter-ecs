@@ -77,3 +77,7 @@ variable "alb_security_group_id" {
 variable "api_target_group_arn" {
   type = string
 }
+
+variable "sqs_queue_arn" {
+  type = string
+}

@@ -73,6 +73,8 @@ module "ecs" {
   rds_security_group_id   = module.rds.security_group_id
   redis_security_group_id = module.redis.security_group_id
 
+  sqs_queue_arn = module.sqs.queue_arn
+
   tags = var.tags
 }
 
