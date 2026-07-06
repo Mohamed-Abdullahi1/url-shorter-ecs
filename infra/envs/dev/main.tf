@@ -67,6 +67,9 @@ module "ecs" {
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnet_ids
 
+  alb_security_group_id = module.alb.alb_security_group_id
+  api_target_group_arn  = module.alb.api_target_group_arn
+
   tags = var.tags
 }
 
