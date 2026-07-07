@@ -14,3 +14,7 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
+variable "certificate_arn" {
+  type = string
+}
