@@ -109,3 +109,12 @@ module "route53" {
 
   tags = var.tags
 }
+
+module "waf" {
+  source = "../../modules/waf"
+
+  project_name = var.project_name
+  alb_arn      = module.alb.alb_arn
+
+  tags = var.tags
+}

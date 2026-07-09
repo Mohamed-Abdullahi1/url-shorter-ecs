@@ -13,3 +13,7 @@ output "api_target_group_arn" {
 output "alb_zone_id" {
   value = aws_lb.alb.zone_id
 }
+
+output "alb_arn" {
+  value = aws_lb.alb.arn
+}
