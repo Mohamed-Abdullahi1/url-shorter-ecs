@@ -12,3 +12,13 @@ output "ecs_cluster_name" {
   description = "ECS cluster name"
   value       = module.ecs.cluster_name
 }
+
+output "application_url" {
+  description = "Application URL"
+  value       = module.route53.application_url
+}
+
+output "name_servers" {
+  description = "Route53 name servers"
+  value       = module.route53.name_servers
+}
