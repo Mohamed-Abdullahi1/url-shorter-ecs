@@ -24,7 +24,7 @@ resource "aws_ecs_task_definition" "api" {
       environment = [
         {
           name  = "DATABASE_URL"
-          value = "postgres://${var.db_username}:${var.db_password}@${var.db_address}:5432/${var.db_name}?sslmode=disable"
+          value = "postgres://${var.db_username}:${var.db_password}@${var.db_address}:5432/${var.db_name}?sslmode=require"
         },
         {
           name  = "BASE_URL"
@@ -71,7 +71,7 @@ resource "aws_ecs_task_definition" "worker" {
       environment = [
         {
           name  = "DATABASE_URL"
-          value = "postgres://${var.db_username}:${var.db_password}@${var.db_address}:5432/${var.db_name}?sslmode=disable"
+          value = "postgres://${var.db_username}:${var.db_password}@${var.db_address}:5432/${var.db_name}?sslmode=require"
         },
         {
           name  = "SQS_QUEUE_URL"
@@ -117,7 +117,7 @@ resource "aws_ecs_task_definition" "dashboard" {
       environment = [
         {
           name  = "DATABASE_URL"
-          value = "postgres://${var.db_username}:${var.db_password}@${var.db_address}:5432/${var.db_name}?sslmode=disable"
+          value = "postgres://${var.db_username}:${var.db_password}@${var.db_address}:5432/${var.db_name}?sslmode=require"
         }
       ]
 
