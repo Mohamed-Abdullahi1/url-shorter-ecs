@@ -52,9 +52,11 @@ module "ecs" {
 
   project_name = var.project_name
 
-  api_image       = "${module.ecr.repository_urls["api"]}:latest"
-  worker_image    = "${module.ecr.repository_urls["worker"]}:latest"
-  dashboard_image = "${module.ecr.repository_urls["dashboard"]}:latest"
+  api_image       = "${module.ecr.repository_urls["api"]}:v3"
+  worker_image    = "${module.ecr.repository_urls["worker"]}:v3"
+  dashboard_image = "${module.ecr.repository_urls["dashboard"]}:v3"
+
+  base_url = "https://url.moabdullahi.uk"
 
   db_address  = module.rds.db_address
   db_name     = module.rds.db_name
