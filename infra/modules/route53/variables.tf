@@ -1,16 +1,11 @@
+variable "hosted_zone_id" {
+  description = "Existing Route 53 hosted zone ID"
+  type        = string
+}
+
 variable "domain_name" {
-  description = "Domain name for the application"
+  description = "Application domain name"
   type        = string
-}
-
-variable "certificate_arn" {
-  description = "ACM certificate ARN"
-  type        = string
-}
-
-variable "domain_validation_options" {
-  description = "ACM DNS validation options"
-  type        = any
 }
 
 variable "alb_dns_name" {
@@ -19,12 +14,6 @@ variable "alb_dns_name" {
 }
 
 variable "alb_zone_id" {
-  description = "Application Load Balancer Hosted Zone ID"
+  description = "Application Load Balancer hosted zone ID"
   type        = string
-}
-
-variable "tags" {
-  description = "Tags"
-  type        = map(string)
-  default     = {}
 }
