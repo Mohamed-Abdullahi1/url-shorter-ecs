@@ -51,7 +51,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
           role-session-name: url-shortener-${{ matrix.service }}
 
-      - name: Log in to ECR
+      - name: Login to ECR
         id: ecr
         uses: aws-actions/amazon-ecr-login@v2
 
@@ -74,6 +74,7 @@ jobs:
           image: ${{ matrix.service }}:${{ github.sha }}
           fail-build: true
           severity-cutoff: high
+          output-format: table
 
       - name: Push image
         run: |
