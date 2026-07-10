@@ -9,7 +9,7 @@ RUN pip install \
     --prefix=/install \
     -r requirements.txt
 
-FROM python:3.12-slim
+FROM python:3.12-slim-bookworm
 
 RUN groupadd --system appgroup && \
     useradd --system --gid appgroup --create-home appuser
