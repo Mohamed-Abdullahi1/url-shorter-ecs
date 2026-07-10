@@ -1,0 +1,82 @@
+name: Build and Push Images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "app/**"
+      - "services/**"
+      - ".github/workflows/docker-build-push.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build ${{ matrix.service }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: api
+            context: ./app
+            repository: ${{ vars.API_ECR_REPOSITORY }}
+
+          - service: worker
+            context: ./services/worker
+            repository: ${{ vars.WORKER_ECR_REPOSITORY }}
+
+          - service: dashboard
+            context: ./services/dashboard
+            repository: ${{ vars.DASHBOARD_ECR_REPOSITORY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: url-shortener-${{ matrix.service }}
+
+      - name: Log in to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          platforms: linux/amd64
+          load: true
+          tags: ${{ matrix.service }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+      - name: Scan image
+        uses: anchore/scan-action@v7
+        with:
+          image: ${{ matrix.service }}:${{ github.sha }}
+          fail-build: true
+          severity-cutoff: high
+
+      - name: Push image
+        run: |
+          IMAGE_URI="${{ steps.ecr.outputs.registry }}/${{ matrix.repository }}:${{ github.sha }}"
+          docker tag "${{ matrix.service }}:${{ github.sha }}" "$IMAGE_URI"
+          docker push "$IMAGE_URI"
