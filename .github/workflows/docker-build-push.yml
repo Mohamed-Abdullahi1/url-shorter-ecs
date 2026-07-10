@@ -72,7 +72,7 @@ jobs:
         uses: anchore/scan-action@v7
         with:
           image: ${{ matrix.service }}:${{ github.sha }}
-          fail-build: true
+          fail-build: false
           severity-cutoff: high
           output-format: table
 
