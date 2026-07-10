@@ -94,7 +94,8 @@ module "alb" {
 module "acm" {
   source = "../../modules/acm"
 
-  domain_name = var.domain_name
+  domain_name    = var.domain_name
+  hosted_zone_id = var.hosted_zone_id
 
   tags = var.tags
 }
@@ -102,14 +103,11 @@ module "acm" {
 module "route53" {
   source = "../../modules/route53"
 
-  domain_name               = var.domain_name
-  certificate_arn           = module.acm.certificate_arn
-  domain_validation_options = module.acm.domain_validation_options
+  hosted_zone_id = var.hosted_zone_id
+  domain_name    = var.domain_name
 
   alb_dns_name = module.alb.alb_dns_name
   alb_zone_id  = module.alb.alb_zone_id
-
-  tags = var.tags
 }
 
 module "waf" {

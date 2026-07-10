@@ -54,3 +54,7 @@ variable "domain_name" {
   type        = string
   default     = "url.moabdullahi.uk"
 }
+
+variable "hosted_zone_id" {
+  type = string
+}
