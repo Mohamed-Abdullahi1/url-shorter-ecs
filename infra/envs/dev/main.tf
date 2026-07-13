@@ -6,14 +6,16 @@ module "vpc" {
   private_subnet_cidrs = var.private_subnet_cidrs
   availability_zones   = var.availability_zones
 }
+data "aws_ecr_repository" "api" {
+  name = "${var.project_name}/api"
+}
 
-module "ecr" {
-  source = "../../modules/ecr"
+data "aws_ecr_repository" "worker" {
+  name = "${var.project_name}/worker"
+}
 
-  project_name     = var.project_name
-  repository_names = var.repository_names
-
-  tags = var.tags
+data "aws_ecr_repository" "dashboard" {
+  name = "${var.project_name}/dashboard"
 }
 
 module "rds" {
@@ -52,9 +54,9 @@ module "ecs" {
 
   project_name = var.project_name
 
-  api_image       = "${module.ecr.repository_urls["api"]}:${var.image_tag}"
-  worker_image    = "${module.ecr.repository_urls["worker"]}:${var.image_tag}"
-  dashboard_image = "${module.ecr.repository_urls["dashboard"]}:${var.image_tag}"
+  api_image       = "${data.aws_ecr_repository.api.repository_url}:${var.image_tag}"
+  worker_image    = "${data.aws_ecr_repository.worker.repository_url}:${var.image_tag}"
+  dashboard_image = "${data.aws_ecr_repository.dashboard.repository_url}:${var.image_tag}"
 
   base_url = "https://url.moabdullahi.uk"
 
