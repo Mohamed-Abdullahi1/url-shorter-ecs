@@ -31,30 +31,60 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  prepare:
+    name: Prepare build matrix
+    runs-on: ubuntu-latest
+
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+
+    steps:
+      - name: Create matrix
+        id: matrix
+        env:
+          SELECTED_SERVICE: ${{ inputs.service || 'all' }}
+          API_REPOSITORY: ${{ vars.API_ECR_REPOSITORY }}
+          WORKER_REPOSITORY: ${{ vars.WORKER_ECR_REPOSITORY }}
+          DASHBOARD_REPOSITORY: ${{ vars.DASHBOARD_ECR_REPOSITORY }}
+        run: |
+          MATRIX=$(jq -cn \
+            --arg selected "$SELECTED_SERVICE" \
+            --arg api "$API_REPOSITORY" \
+            --arg worker "$WORKER_REPOSITORY" \
+            --arg dashboard "$DASHBOARD_REPOSITORY" \
+            '[
+              {
+                service: "api",
+                context: "./app",
+                repository: $api
+              },
+              {
+                service: "worker",
+                context: "./services/worker",
+                repository: $worker
+              },
+              {
+                service: "dashboard",
+                context: "./services/dashboard",
+                repository: $dashboard
+              }
+            ]
+            | if $selected == "all"
+              then .
+              else map(select(.service == $selected))
+              end')
+
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
   build:
     name: Build ${{ matrix.service }}
+    needs: prepare
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - service: api
-            context: ./app
-            repository: ${{ vars.API_ECR_REPOSITORY }}
-
-          - service: worker
-            context: ./services/worker
-            repository: ${{ vars.WORKER_ECR_REPOSITORY }}
-
-          - service: dashboard
-            context: ./services/dashboard
-            repository: ${{ vars.DASHBOARD_ECR_REPOSITORY }}
-
-    if: >
-      github.event_name == 'push' ||
-      inputs.service == 'all' ||
-      inputs.service == matrix.service
+        include: ${{ fromJSON(needs.prepare.outputs.matrix) }}
 
     steps:
       - name: Checkout
@@ -63,15 +93,15 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
           role-session-name: url-shortener-${{ matrix.service }}
 
-      - name: Login to Amazon ECR
+      - name: Login to ECR
         id: ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Set up Docker Buildx
+      - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Build image
@@ -97,7 +127,13 @@ jobs:
           format: table
 
       - name: Push image
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+          REPOSITORY: ${{ matrix.repository }}
+          IMAGE_TAG: ${{ github.sha }}
+          SERVICE: ${{ matrix.service }}
         run: |
-          IMAGE_URI="${{ steps.ecr.outputs.registry }}/${{ matrix.repository }}:${{ github.sha }}"
-          docker tag "${{ matrix.service }}:${{ github.sha }}" "$IMAGE_URI"
+          IMAGE_URI="${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}"
+
+          docker tag "${SERVICE}:${IMAGE_TAG}" "$IMAGE_URI"
           docker push "$IMAGE_URI"

@@ -1,4 +1,4 @@
-FROM golang:1.25.11-alpine3.24 AS builder
+FROM golang:1.25.12-alpine3.24 AS builder
 
 WORKDIR /build
 
@@ -12,12 +12,12 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 
 FROM alpine:3.24
 
+RUN addgroup -S appgroup && \
+    adduser -S appuser -G appgroup
+
 WORKDIR /app
 
-RUN addgroup -S user && \
-    adduser -S user -G user
-
-COPY --from=builder /build/worker .
+COPY --from=builder --chown=appuser:appgroup /build/worker ./worker
 
 USER user
 
