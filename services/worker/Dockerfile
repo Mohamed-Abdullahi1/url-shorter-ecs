@@ -19,6 +19,6 @@ WORKDIR /app
 
 COPY --from=builder --chown=appuser:appgroup /build/worker ./worker
 
-USER user
+USER appuser
 
 CMD ["./worker"]

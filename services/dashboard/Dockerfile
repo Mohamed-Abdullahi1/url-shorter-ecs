@@ -19,7 +19,7 @@ WORKDIR /app
 
 COPY --from=builder --chown=appuser:appgroup /build/dashboard ./dashboard
 
-USER user
+USER appuser
 
 EXPOSE 8081
 
