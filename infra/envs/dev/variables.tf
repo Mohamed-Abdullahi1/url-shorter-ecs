@@ -58,3 +58,8 @@ variable "domain_name" {
 variable "hosted_zone_id" {
   type = string
 }
+
+variable "image_tag" {
+  description = "Docker image tag deployed to ECS"
+  type        = string
+}
