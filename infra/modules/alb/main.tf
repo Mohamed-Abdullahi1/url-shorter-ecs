@@ -44,8 +44,8 @@ resource "aws_lb" "alb" {
   })
 }
 
-resource "aws_lb_target_group" "api" {
-  name        = "${var.project_name}-api-tg"
+resource "aws_lb_target_group" "api_blue" {
+  name        = "${var.project_name}-api-blue"
   port        = 8080
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -62,7 +62,29 @@ resource "aws_lb_target_group" "api" {
   }
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-api-tg"
+    Name = "${var.project_name}-api-blue"
+  })
+}
+
+resource "aws_lb_target_group" "api_green" {
+  name        = "${var.project_name}-api-green"
+  port        = 8080
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  health_check {
+    path                = "/healthz"
+    protocol            = "HTTP"
+    matcher             = "200"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
+  tags = merge(var.tags, {
+    Name = "${var.project_name}-api-green"
   })
 }
 
@@ -89,7 +111,45 @@ resource "aws_lb_listener" "https" {
   certificate_arn   = var.certificate_arn
 
   default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.api.arn
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Not found"
+      status_code  = "404"
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "api" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 100
+
+  action {
+    type = "forward"
+
+    forward {
+      target_group {
+        arn    = aws_lb_target_group.api_blue.arn
+        weight = 100
+      }
+
+      target_group {
+        arn    = aws_lb_target_group.api_green.arn
+        weight = 0
+      }
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["url.moabdullahi.uk"]
+    }
+  }
+
+  condition {
+    path_pattern {
+      values = ["/*"]
+    }
   }
 }

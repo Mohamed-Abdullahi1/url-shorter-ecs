@@ -74,7 +74,15 @@ variable "alb_security_group_id" {
   type = string
 }
 
-variable "api_target_group_arn" {
+variable "api_blue_target_group_arn" {
+  type = string
+}
+
+variable "api_green_target_group_arn" {
+  type = string
+}
+
+variable "api_listener_rule_arn" {
   type = string
 }
 

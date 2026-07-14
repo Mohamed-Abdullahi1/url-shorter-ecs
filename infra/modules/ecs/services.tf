@@ -5,12 +5,14 @@ resource "aws_ecs_service" "api" {
   desired_count   = 1
   launch_type     = "FARGATE"
 
-  deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent         = 200
+  deployment_configuration {
+    strategy             = "CANARY"
+    bake_time_in_minutes = 5
 
-  deployment_circuit_breaker {
-    enable   = true
-    rollback = true
+    canary_configuration {
+      canary_percent              = 10
+      canary_bake_time_in_minutes = 5
+    }
   }
 
   network_configuration {
@@ -20,9 +22,15 @@ resource "aws_ecs_service" "api" {
   }
 
   load_balancer {
-    target_group_arn = var.api_target_group_arn
+    target_group_arn = var.api_blue_target_group_arn
     container_name   = "api"
     container_port   = 8080
+
+    advanced_configuration {
+      alternate_target_group_arn = var.api_green_target_group_arn
+      production_listener_rule   = var.api_listener_rule_arn
+      role_arn                   = aws_iam_role.ecs_infrastructure.arn
+    }
   }
 }
 
@@ -32,6 +40,14 @@ resource "aws_ecs_service" "worker" {
   task_definition = aws_ecs_task_definition.worker.arn
   desired_count   = 1
   launch_type     = "FARGATE"
+
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
+
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   network_configuration {
     subnets          = var.private_subnet_ids
@@ -46,6 +62,14 @@ resource "aws_ecs_service" "dashboard" {
   task_definition = aws_ecs_task_definition.dashboard.arn
   desired_count   = 1
   launch_type     = "FARGATE"
+
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
+
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   network_configuration {
     subnets          = var.private_subnet_ids

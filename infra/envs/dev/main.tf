@@ -71,8 +71,10 @@ module "ecs" {
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnet_ids
 
-  alb_security_group_id = module.alb.alb_security_group_id
-  api_target_group_arn  = module.alb.api_target_group_arn
+  alb_security_group_id      = module.alb.alb_security_group_id
+  api_blue_target_group_arn  = module.alb.api_blue_target_group_arn
+  api_green_target_group_arn = module.alb.api_green_target_group_arn
+  api_listener_rule_arn      = module.alb.api_listener_rule_arn
 
   rds_security_group_id   = module.rds.security_group_id
   redis_security_group_id = module.redis.security_group_id
