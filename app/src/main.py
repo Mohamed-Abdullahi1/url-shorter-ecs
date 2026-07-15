@@ -9,8 +9,7 @@ app = FastAPI()
 
 @app.get("/healthz")
 def health():
-    return {"status": "ok", "ts": int(time.time()), "db": get_backend_type()}
-
+    return {"status": "ok", "ts": int(time.time()), "db": get_backend_type(), "version" : "v2"}
 
 @app.post("/shorten")
 async def shorten(req: Request):
