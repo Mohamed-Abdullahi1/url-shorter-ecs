@@ -76,6 +76,9 @@ module "ecs" {
   api_green_target_group_arn = module.alb.api_green_target_group_arn
   api_listener_rule_arn      = module.alb.api_listener_rule_arn
 
+  api_5xx_alarm_name             = module.alb.api_5xx_alarm_name
+  api_unhealthy_hosts_alarm_name = module.alb.api_unhealthy_hosts_alarm_name
+
   rds_security_group_id   = module.rds.security_group_id
   redis_security_group_id = module.redis.security_group_id
 
