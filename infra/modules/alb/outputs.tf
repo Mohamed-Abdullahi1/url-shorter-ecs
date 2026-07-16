@@ -25,3 +25,11 @@ output "api_green_target_group_arn" {
 output "api_listener_rule_arn" {
   value = aws_lb_listener_rule.api.arn
 }
+
+output "api_5xx_alarm_name" {
+  value = aws_cloudwatch_metric_alarm.api_5xx.alarm_name
+}
+
+output "api_unhealthy_hosts_alarm_name" {
+  value = aws_cloudwatch_metric_alarm.api_unhealthy_hosts.alarm_name
+}
