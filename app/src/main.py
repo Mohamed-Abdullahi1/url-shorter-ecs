@@ -9,7 +9,7 @@ app = FastAPI()
 
 @app.get("/healthz")
 def health():
-    raise HTTPException(status_code=500, detail="Rollback test")
+    return {"status": "ok", "ts": int(time.time()), "db": get_backend_type(), "version": "v2"}
 
 @app.post("/shorten")
 async def shorten(req: Request):
