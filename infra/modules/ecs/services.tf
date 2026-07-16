@@ -15,6 +15,16 @@ resource "aws_ecs_service" "api" {
     }
   }
 
+  alarms {
+    alarm_names = [
+      var.api_5xx_alarm_name,
+      var.api_unhealthy_hosts_alarm_name
+    ]
+
+    enable   = true
+    rollback = true
+  }
+
   network_configuration {
     subnets          = var.private_subnet_ids
     security_groups  = [aws_security_group.ecs_tasks.id]
