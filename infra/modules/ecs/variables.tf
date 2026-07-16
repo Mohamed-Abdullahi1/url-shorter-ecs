@@ -89,3 +89,11 @@ variable "api_listener_rule_arn" {
 variable "sqs_queue_arn" {
   type = string
 }
+
+variable "api_5xx_alarm_name" {
+  type = string
+}
+
+variable "api_unhealthy_hosts_alarm_name" {
+  type = string
+}
