@@ -7,9 +7,11 @@ from .events import publish_click_event
 app = FastAPI()
 
 
+from fastapi import Response
+
 @app.get("/healthz")
 def health():
-    return {"status": "ok", "ts": int(time.time()), "db": get_backend_type(), "version": "v2"}
+    return Response(status_code=500)
 
 @app.post("/shorten")
 async def shorten(req: Request):
