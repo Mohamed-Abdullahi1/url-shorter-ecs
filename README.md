@@ -40,6 +40,15 @@ The platform consists of three independent microservices deployed to a single EC
 
 - Optimised infrastructure costs by replacing NAT Gateways with VPC Endpoints, reducing container image sizes through multi-stage Docker builds, and provisioning infrastructure on demand using Terraform.
 
+---
+## Architecture
+
+The platform is deployed within a custom multi-Availability Zone Amazon VPC, with all application workloads running in private subnets behind an internet-facing Application Load Balancer. HTTPS traffic is protected by AWS WAF and terminated using AWS Certificate Manager before being forwarded to Amazon ECS Fargate services.
+
+The platform consists of three independent microservices: an API responsible for URL shortening and redirects, a Worker service that processes asynchronous tasks from Amazon SQS, and a Dashboard service for application management. Amazon RDS PostgreSQL provides persistent storage, while Amazon ElastiCache Redis improves application performance through caching.
+
+To reduce operational overhead and improve security, the infrastructure is provisioned entirely with Terraform and deployed through GitHub Actions using OpenID Connect (OIDC). Native Amazon ECS canary deployments combined with Amazon CloudWatch deployment alarms provide automatic rollback when unhealthy task revisions are detected.
+
 <p align="center">
   <img src="docs/architecture.png" alt="Architecture Diagram" width="100%">
 </p>
