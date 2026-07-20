@@ -54,8 +54,27 @@ To reduce operational overhead and improve security, the infrastructure is provi
 </p>
 
 ---
+## Design Decisions & Trade-offs
 
-## Features
+### VPC Endpoints over NAT Gateways
+
+Interface and Gateway VPC Endpoints were used instead of NAT Gateways, allowing private workloads to communicate with AWS services without traversing the public internet. This reduced networking costs while improving the security posture by keeping traffic within the AWS network.
+
+### Native Amazon ECS Canary Deployments
+
+Native Amazon ECS canary deployments were chosen over all-at-once deployments to reduce the risk of introducing faulty application versions into production. New task revisions receive 10% of production traffic for a 5-minute bake period while Amazon CloudWatch deployment alarms continuously monitor application health. If an unhealthy deployment is detected, Amazon ECS automatically rolls back to the previous healthy task revision without manual intervention.
+
+### Amazon S3 for Remote Terraform State
+
+Amazon S3 was chosen as the remote Terraform backend to provide durable, versioned, and centrally managed state storage. Storing the Terraform state remotely enables consistent infrastructure management across environments while allowing the infrastructure to be recreated reliably.
+
+### OpenID Connect (OIDC) over Long-Lived Credentials
+
+GitHub Actions authenticates to AWS using OpenID Connect (OIDC) instead of long-lived IAM access keys. This removes the need to store AWS credentials in GitHub Secrets while providing short-lived credentials for each workflow execution.
+
+---
+
+## Key Features
 
 ### Platform
 
