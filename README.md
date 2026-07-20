@@ -40,12 +40,8 @@ The platform consists of three independent microservices deployed to a single EC
 
 - Optimised infrastructure costs by replacing NAT Gateways with VPC Endpoints, reducing container image sizes through multi-stage Docker builds, and provisioning infrastructure on demand using Terraform.
 
-## Architecture
-
 <p align="center">
-
-*Architecture diagram placeholder*
-
+  <img src="docs/architecture.png" alt="Architecture Diagram" width="100%">
 </p>
 
 ---
@@ -151,9 +147,9 @@ Authenticates to AWS using OpenID Connect (OIDC) before safely destroying all Te
 
 ## Canary Deployments & Automatic Rollback
 
-Application updates are deployed using Amazon ECS native canary deployments, allowing new task revisions to be validated with a small percentage of production traffic before a full rollout.
+Application updates are deployed using native Amazon ECS canary deployments, allowing new task revisions to be validated using a small percentage of production traffic before a full rollout.
 
-Rather than replacing all running tasks simultaneously, ECS gradually shifts traffic to the new task revision while continuously monitoring deployment health through Amazon CloudWatch alarms.
+Rather than replacing all running tasks simultaneously, ECS gradually shifts traffic to the new task revision while continuously monitoring deployment health using Amazon CloudWatch deployment alarms.
 
 ### Deployment Strategy
 
@@ -163,30 +159,25 @@ Rather than replacing all running tasks simultaneously, ECS gradually shifts tra
 - CloudWatch deployment alarms
 - Automatic rollback on deployment failure
 
-### Automatic Rollback
+### Rollback Validation
 
-If a deployment causes health checks or CloudWatch alarms to enter the `ALARM` state during the bake period, Amazon ECS automatically:
+To verify the rollback mechanism, the application's `/healthz` endpoint was intentionally modified to return an unhealthy response during deployment.
 
-- Stops the deployment.
-- Redirects production traffic back to the previous healthy task revision.
-- Marks the deployment as rolled back.
-- Preserves application availability without manual intervention.
+The deployment entered the canary phase, where 10% of production traffic was directed to the new task revision for a 5-minute bake period. During this time, the Application Load Balancer health checks failed, causing the associated CloudWatch deployment alarm to enter the `ALARM` state.
 
-This deployment strategy significantly reduces the risk of introducing faulty application versions into production while enabling rapid and repeatable releases.
+Amazon ECS automatically cancelled the deployment, redirected production traffic to the previous healthy task revision, and completed the rollback without requiring manual intervention.
 
-![Canary Deployment](docs/canary-deployment-workflow.png)
+This validated both the deployment alarm configuration and the automatic rollback behaviour.
+
+![Rollback Validation](docs/rollback-validation.png)
 
 ---
 
-### Rollback Validation
+### CloudWatch Deployment Alarm
 
-To verify the rollback mechanism, the application's health endpoint was intentionally modified to return an unhealthy response during deployment.
+The deployment alarm continuously monitored the health of the Application Load Balancer target group throughout the canary deployment. When the unhealthy host count exceeded the configured threshold, the alarm entered the `ALARM` state, signalling Amazon ECS to roll back the deployment automatically.
 
-CloudWatch detected the failed health checks, causing the deployment alarm to enter the `ALARM` state. Amazon ECS automatically cancelled the deployment and restored the previous healthy task revision.
-
-This confirmed that failed deployments are detected and recovered automatically without requiring manual intervention.
-
-![Rollback Validation](docs/rollback-validation.png)
+![CloudWatch Deployment Alarm](docs/cloudwatch-deployment-alarm.png)
 
 ## Project Structure
 
