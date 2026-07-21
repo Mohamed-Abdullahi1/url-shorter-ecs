@@ -3,8 +3,11 @@ from fastapi.responses import RedirectResponse
 import os, hashlib, time, json
 from .db import put_mapping, get_mapping, get_backend_type, increment_clicks
 from .events import publish_click_event
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 @app.get("/healthz")
 def health():

@@ -7,6 +7,7 @@ on:
     paths:
       - "app/**"
       - "services/**"
+      - "frontend/**"
       - ".github/workflows/docker-build-push.yml"
 
   workflow_dispatch:
@@ -21,6 +22,7 @@ on:
           - api
           - worker
           - dashboard
+          - frontend
 
 permissions:
   contents: read
@@ -43,15 +45,17 @@ jobs:
         id: matrix
         env:
           SELECTED_SERVICE: ${{ inputs.service || 'all' }}
-          API_REPOSITORY: ${{ vars.API_ECR_REPOSITORY }}
-          WORKER_REPOSITORY: ${{ vars.WORKER_ECR_REPOSITORY }}
-          DASHBOARD_REPOSITORY: ${{ vars.DASHBOARD_ECR_REPOSITORY }}
+          API_REPOSITORY: ${{ secrets.API_ECR_REPOSITORY }}
+          WORKER_REPOSITORY: ${{ secrets.WORKER_ECR_REPOSITORY }}
+          DASHBOARD_REPOSITORY: ${{ secrets.DASHBOARD_ECR_REPOSITORY }}
+          FRONTEND_REPOSITORY: ${{ secrets.FRONTEND_ECR_REPOSITORY }}
         run: |
           MATRIX=$(jq -cn \
             --arg selected "$SELECTED_SERVICE" \
             --arg api "$API_REPOSITORY" \
             --arg worker "$WORKER_REPOSITORY" \
             --arg dashboard "$DASHBOARD_REPOSITORY" \
+            --arg frontend "$FRONTEND_REPOSITORY" \
             '[
               {
                 service: "api",
@@ -67,6 +71,11 @@ jobs:
                 service: "dashboard",
                 context: "./services/dashboard",
                 repository: $dashboard
+              },
+              {
+                service: "frontend",
+                context: "./frontend",
+                repository: $frontend
               }
             ]
             | if $selected == "all"
@@ -101,7 +110,7 @@ jobs:
         id: ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Set up Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Build image

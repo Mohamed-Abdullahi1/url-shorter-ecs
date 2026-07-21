@@ -42,7 +42,8 @@ module "ecr" {
   repository_names = [
     "api",
     "worker",
-    "dashboard"
+    "dashboard",
+    "frontend",
   ]
 
   tags = {
