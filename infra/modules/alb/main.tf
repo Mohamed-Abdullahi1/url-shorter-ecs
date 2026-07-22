@@ -44,6 +44,28 @@ resource "aws_lb" "alb" {
   })
 }
 
+resource "aws_lb_target_group" "frontend" {
+  name        = "${var.project_name}-frontend"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  health_check {
+    path                = "/healthz"
+    protocol            = "HTTP"
+    matcher             = "200"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
+  tags = merge(var.tags, {
+    Name = "${var.project_name}-frontend"
+  })
+}
+
 resource "aws_lb_target_group" "api_blue" {
   name        = "${var.project_name}-api-blue"
   port        = 8080
@@ -111,13 +133,8 @@ resource "aws_lb_listener" "https" {
   certificate_arn   = var.certificate_arn
 
   default_action {
-    type = "fixed-response"
-
-    fixed_response {
-      content_type = "text/plain"
-      message_body = "Not found"
-      status_code  = "404"
-    }
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.frontend.arn
   }
 }
 
@@ -149,7 +166,12 @@ resource "aws_lb_listener_rule" "api" {
 
   condition {
     path_pattern {
-      values = ["/*"]
+      values = [
+        "/shorten",
+        "/healthz",
+        "/stats/*",
+        "/r/*"
+      ]
     }
   }
 }
