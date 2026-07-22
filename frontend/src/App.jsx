@@ -10,6 +10,7 @@ function App() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     setLoading(true);
     setError("");
     setShortUrl("");
@@ -17,13 +18,21 @@ function App() {
     try {
       const response = await axios.post("/shorten", { url });
 
-      console.log("API response:", response.data);
+      console.log("API Response:", response.data);
 
-      setShortUrl(
-        `${window.location.origin}/${response.data.short}`
-      );
+      setShortUrl(response.data.short_url);
     } catch (err) {
-      console.error(err);
+      console.error("Shorten request failed:", err);
+
+      if (err.response) {
+        console.error("Status:", err.response.status);
+        console.error("Response:", err.response.data);
+      } else if (err.request) {
+        console.error("No response received:", err.request);
+      } else {
+        console.error("Error:", err.message);
+      }
+
       setError("Unable to shorten the URL. Please try again.");
     } finally {
       setLoading(false);
@@ -42,7 +51,9 @@ function App() {
     <main className="page">
       <section className="hero">
         <p className="eyebrow">URL Shortening Platform</p>
+
         <h1>Create shorter links in seconds.</h1>
+
         <p className="subtitle">
           Create and share shortened URLs instantly, powered by Amazon ECS
           Fargate, Terraform and GitHub Actions.
@@ -75,6 +86,7 @@ function App() {
           <div className="result">
             <div>
               <p className="result-label">Your shortened URL</p>
+
               <a href={shortUrl} target="_blank" rel="noreferrer">
                 {shortUrl}
               </a>
