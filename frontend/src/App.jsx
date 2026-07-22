@@ -16,8 +16,14 @@ function App() {
 
     try {
       const response = await axios.post("/shorten", { url });
-      setShortUrl(`https://url.moabdullahi.uk/${response.data.key}`);
-    } catch {
+
+      console.log("API response:", response.data);
+
+      setShortUrl(
+        `${window.location.origin}/${response.data.short}`
+      );
+    } catch (err) {
+      console.error(err);
       setError("Unable to shorten the URL. Please try again.");
     } finally {
       setLoading(false);
@@ -25,15 +31,22 @@ function App() {
   };
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(shortUrl);
+    try {
+      await navigator.clipboard.writeText(shortUrl);
+    } catch (err) {
+      console.error("Failed to copy URL:", err);
+    }
   };
 
   return (
     <main className="page">
       <section className="hero">
-        <p className="eyebrow">URL Shortening Platform </p>
+        <p className="eyebrow">URL Shortening Platform</p>
         <h1>Create shorter links in seconds.</h1>
-        <p className="subtitle">Create and share shortened URLs instantly, powered by Amazon ECS Fargate, Terraform and GitHub Actions.</p>
+        <p className="subtitle">
+          Create and share shortened URLs instantly, powered by Amazon ECS
+          Fargate, Terraform and GitHub Actions.
+        </p>
       </section>
 
       <section className="card">
@@ -62,15 +75,25 @@ function App() {
           <div className="result">
             <div>
               <p className="result-label">Your shortened URL</p>
-              <a href={shortUrl} target="_blank" rel="noreferrer">{shortUrl}</a>
+              <a href={shortUrl} target="_blank" rel="noreferrer">
+                {shortUrl}
+              </a>
             </div>
 
-            <button className="copy-button" type="button" onClick={handleCopy}>Copy</button>
+            <button
+              className="copy-button"
+              type="button"
+              onClick={handleCopy}
+            >
+              Copy
+            </button>
           </div>
         )}
       </section>
 
-      <footer>Powered by React • FastAPI • Amazon ECS • Terraform</footer>
+      <footer>
+        Powered by React • FastAPI • Amazon ECS • Terraform
+      </footer>
     </main>
   );
 }
