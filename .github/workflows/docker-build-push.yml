@@ -48,7 +48,7 @@ jobs:
           API_REPOSITORY: ${{ vars.API_ECR_REPOSITORY }}
           WORKER_REPOSITORY: ${{ vars.WORKER_ECR_REPOSITORY }}
           DASHBOARD_REPOSITORY: ${{ vars.DASHBOARD_ECR_REPOSITORY }}
-          FRONTEND_REPOSITORY: ${{ secrets.FRONTEND_ECR_REPOSITORY }}
+          FRONTEND_REPOSITORY: ${{ vars.FRONTEND_ECR_REPOSITORY }}
         run: |
           MATRIX=$(jq -cn \
             --arg selected "$SELECTED_SERVICE" \
