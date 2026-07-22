@@ -52,7 +52,7 @@ resource "aws_lb_target_group" "frontend" {
   target_type = "ip"
 
   health_check {
-    path                = "/healthz"
+    path                = "/"
     protocol            = "HTTP"
     matcher             = "200"
     interval            = 30
