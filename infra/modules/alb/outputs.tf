@@ -33,3 +33,7 @@ output "api_5xx_alarm_name" {
 output "api_unhealthy_hosts_alarm_name" {
   value = aws_cloudwatch_metric_alarm.api_unhealthy_hosts.alarm_name
 }
+
+output "frontend_target_group_arn" {
+  value = aws_lb_target_group.frontend.arn
+}
