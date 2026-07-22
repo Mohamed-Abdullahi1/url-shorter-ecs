@@ -6,6 +6,7 @@ module "vpc" {
   private_subnet_cidrs = var.private_subnet_cidrs
   availability_zones   = var.availability_zones
 }
+
 data "aws_ecr_repository" "api" {
   name = "${var.project_name}/api"
 }
@@ -16,6 +17,10 @@ data "aws_ecr_repository" "worker" {
 
 data "aws_ecr_repository" "dashboard" {
   name = "${var.project_name}/dashboard"
+}
+
+data "aws_ecr_repository" "frontend" {
+  name = "${var.project_name}/frontend"
 }
 
 module "rds" {
@@ -57,6 +62,7 @@ module "ecs" {
   api_image       = "${data.aws_ecr_repository.api.repository_url}:${var.image_tag}"
   worker_image    = "${data.aws_ecr_repository.worker.repository_url}:${var.image_tag}"
   dashboard_image = "${data.aws_ecr_repository.dashboard.repository_url}:${var.image_tag}"
+  frontend_image  = "${data.aws_ecr_repository.frontend.repository_url}:${var.image_tag}"
 
   base_url = "https://url.moabdullahi.uk"
 
@@ -75,6 +81,7 @@ module "ecs" {
   api_blue_target_group_arn  = module.alb.api_blue_target_group_arn
   api_green_target_group_arn = module.alb.api_green_target_group_arn
   api_listener_rule_arn      = module.alb.api_listener_rule_arn
+  frontend_target_group_arn  = module.alb.frontend_target_group_arn
 
   api_5xx_alarm_name             = module.alb.api_5xx_alarm_name
   api_unhealthy_hosts_alarm_name = module.alb.api_unhealthy_hosts_alarm_name
