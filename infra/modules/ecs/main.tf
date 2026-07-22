@@ -84,11 +84,3 @@ resource "aws_security_group_rule" "ecs_to_redis" {
   security_group_id        = var.redis_security_group_id
   source_security_group_id = aws_security_group.ecs_tasks.id
 }
-
-variable "rds_security_group_id" {
-  type = string
-}
-
-variable "redis_security_group_id" {
-  type = string
-}

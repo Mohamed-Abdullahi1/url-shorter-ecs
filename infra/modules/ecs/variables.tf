@@ -97,3 +97,23 @@ variable "api_5xx_alarm_name" {
 variable "api_unhealthy_hosts_alarm_name" {
   type = string
 }
+
+variable "frontend_image" {
+  description = "Frontend container image"
+  type        = string
+}
+
+variable "frontend_target_group_arn" {
+  description = "Frontend target group ARN"
+  type        = string
+}
+
+variable "rds_security_group_id" {
+  description = "Security group ID for the RDS database"
+  type        = string
+}
+
+variable "redis_security_group_id" {
+  description = "Security group ID for the Redis cluster"
+  type        = string
+}
