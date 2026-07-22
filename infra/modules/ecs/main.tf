@@ -84,3 +84,13 @@ resource "aws_security_group_rule" "ecs_to_redis" {
   security_group_id        = var.redis_security_group_id
   source_security_group_id = aws_security_group.ecs_tasks.id
 }
+
+resource "aws_security_group_rule" "alb_to_frontend" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.ecs_tasks.id
+  source_security_group_id = var.alb_security_group_id
+  description              = "Allow frontend traffic from ALB"
+}
