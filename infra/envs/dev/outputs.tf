@@ -20,3 +20,8 @@ output "application_url" {
   description = "Application URL"
   value       = module.route53.application_url
 }
+
+output "frontend_target_group_arn" {
+  description = "Frontend target group ARN"
+  value       = module.alb.frontend_target_group_arn
+}
