@@ -15,7 +15,7 @@ function App() {
     setShortUrl("");
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/shorten`, { url });
+      const response = await axios.post("/shorten", { url });
       setShortUrl(`https://url.moabdullahi.uk/${response.data.key}`);
     } catch {
       setError("Unable to shorten the URL. Please try again.");
