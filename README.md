@@ -16,15 +16,23 @@
 
 </div>
 
-## Application Overview
+## Overview
 
-https://github.com/user-attachments/assets/e66002aa-8e5c-4306-8069-75e1b45fe22f
+Production-grade URL shortening platform running on AWS ECS Fargate, designed around secure infrastructure automation, automated deployments and resilient release strategies.
 
-A secure URL shortening platform running on AWS ECS Fargate, designed around Infrastructure as Code, automated deployments, and resilient release strategies.
+Infrastructure is provisioned entirely through Terraform across a custom multi-AZ VPC, with all application workloads running in private subnets behind an Application Load Balancer. GitHub Actions authenticates to AWS using OpenID Connect (OIDC), eliminating the need for long-lived AWS credentials, while Amazon ECS delivers application updates using native canary deployments with automatic CloudWatch alarm-based rollback.
 
-Infrastructure is provisioned entirely through Terraform within a custom multi-AZ VPC using private subnets for all application workloads. GitHub Actions authenticates to AWS using OpenID Connect (OIDC), removing the need for long-lived AWS credentials, while Amazon ECS delivers application updates using native canary deployments with CloudWatch alarm based automatic rollback.
+The platform consists of four independent services: a React frontend, a FastAPI API responsible for URL shortening and redirects, a background worker that processes asynchronous click events from Amazon SQS, and an analytics dashboard. Amazon RDS for PostgreSQL provides persistent storage, while Amazon ElastiCache for Redis improves application performance through caching.
 
-The platform consists of four independent services deployed to a single ECS cluster: a React frontend, FastAPI API, background worker, and analytics dashboard. Amazon RDS for PostgreSQL provides persistent storage, Amazon ElastiCache for Redis improves API performance through caching, and Amazon SQS enables asynchronous processing of click events. The platform is fronted by an Application Load Balancer protected by AWS WAF, with HTTPS termination provided by AWS Certificate Manager.
+HTTPS is provided through AWS Certificate Manager (ACM), with AWS WAF protecting the public entry point. Security is enforced through least-privilege IAM roles, security group isolation between services, and non-root container images, ensuring the platform follows AWS security best practices while remaining fully reproducible through Infrastructure as Code.
+
+## Live Application
+
+The platform is live and accessible over HTTPS at [url.moabdullahi.uk](https://url.moabdullahi.uk).
+
+## Live Demo
+
+[View Platform Demo](https://github.com/user-attachments/assets/e66002aa-8e5c-4306-8069-75e1b45fe22f)
 
 ## Key Outcomes
 
