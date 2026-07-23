@@ -16,13 +16,15 @@
 
 </div>
 
-## Overview
+## Application Overview
+
+https://github.com/user-attachments/assets/e66002aa-8e5c-4306-8069-75e1b45fe22f
 
 A secure URL shortening platform running on AWS ECS Fargate, designed around Infrastructure as Code, automated deployments, and resilient release strategies.
 
 Infrastructure is provisioned entirely through Terraform within a custom multi-AZ VPC using private subnets for all application workloads. GitHub Actions authenticates to AWS using OpenID Connect (OIDC), removing the need for long-lived AWS credentials, while Amazon ECS delivers application updates using native canary deployments with CloudWatch alarm based automatic rollback.
 
-The platform consists of three independent microservices deployed to a single ECS cluster. Amazon RDS PostgreSQL provides persistent storage, Amazon ElastiCache Redis improves API performance through caching, and Amazon SQS enables asynchronous processing of click events. The platform is fronted by an Application Load Balancer protected by AWS WAF, with HTTPS termination provided by AWS Certificate Manager.
+The platform consists of four independent services deployed to a single ECS cluster: a React frontend, FastAPI API, background worker, and analytics dashboard. Amazon RDS for PostgreSQL provides persistent storage, Amazon ElastiCache for Redis improves API performance through caching, and Amazon SQS enables asynchronous processing of click events. The platform is fronted by an Application Load Balancer protected by AWS WAF, with HTTPS termination provided by AWS Certificate Manager.
 
 ## Key Outcomes
 
@@ -45,8 +47,7 @@ The platform consists of three independent microservices deployed to a single EC
 
 The platform is deployed within a custom multi-Availability Zone Amazon VPC, with all application workloads running in private subnets behind an internet-facing Application Load Balancer. HTTPS traffic is protected by AWS WAF and terminated using AWS Certificate Manager before being forwarded to Amazon ECS Fargate services.
 
-The platform consists of three independent microservices: an API responsible for URL shortening and redirects, a Worker service that processes asynchronous tasks from Amazon SQS, and a Dashboard service for application management. Amazon RDS PostgreSQL provides persistent storage, while Amazon ElastiCache Redis improves application performance through caching.
-
+The platform consists of four independent services: a React frontend, an API responsible for URL shortening and redirects, a worker service that processes asynchronous tasks from Amazon SQS, and a dashboard service for application management. Amazon RDS for PostgreSQL provides persistent storage, while Amazon ElastiCache for Redis improves application performance through caching.
 To reduce operational overhead and improve security, the infrastructure is provisioned entirely with Terraform and deployed through GitHub Actions using OpenID Connect (OIDC). Native Amazon ECS canary deployments combined with Amazon CloudWatch deployment alarms provide automatic rollback when unhealthy task revisions are detected.
 
 <p align="center">
@@ -78,7 +79,7 @@ GitHub Actions authenticates to AWS using OpenID Connect (OIDC) instead of long-
 
 ### Platform
 
-- Three independent microservices running on Amazon ECS Fargate
+- Four independent microservices running on Amazon ECS Fargate
 - Infrastructure provisioned entirely with Terraform
 - Multi-AZ deployment across private subnets
 - HTTPS using AWS Certificate Manager (ACM)
