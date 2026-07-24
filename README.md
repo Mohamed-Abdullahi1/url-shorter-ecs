@@ -1,4 +1,6 @@
-<h1 align="center"># ECS Blue/Green Deployment Platform</h1>
+<h1 align="center">
+  ECS Blue/Green Deployment Platform
+</h1>
 
 <div align="center">
 
