@@ -1,4 +1,4 @@
-<h1 align="center">URL Shortener Platform on AWS ECS</h1>
+<h1 align="center"># ECS Blue/Green Deployment Platform</h1>
 
 <div align="center">
 
@@ -148,16 +148,6 @@ By enforcing these checks locally, potential security issues can be identified a
 - Docker images run as a non-root user to reduce the impact of container compromise.
 - Container images are automatically scanned for known vulnerabilities using Trivy during the CI pipeline.
 
-## Cost Optimisation
-
-The platform was designed to minimise running costs while maintaining security, scalability, and operational best practices.
-
-- VPC Endpoints are used in place of NAT Gateways, reducing networking costs while allowing private workloads to access AWS services.
-- Amazon ECS Fargate removes the need to provision, patch, or manage EC2 instances, allowing compute resources to scale independently with the workload.
-- Right-sized Amazon RDS and ElastiCache instances were selected to match the application's requirements while avoiding unnecessary overprovisioning.
-- Docker multi-stage builds produce smaller container images, reducing image transfer times and storage consumption.
-- Infrastructure is provisioned using Terraform, allowing environments to be created when required and destroyed afterwards to avoid unnecessary cloud costs.
-
 ## Pipeline Execution
 
 ### Docker Build & Push
@@ -248,8 +238,8 @@ The deployment alarm continuously monitored the health of the Application Load B
 Clone the repository:
 
 ```bash
-git clone https://github.com/<username>/url-shortner.git
-cd url-shortner
+git clone https://github.com/Mohamed-Abdullahi1/ecs-blue-green-platform.git
+cd ecs-blue-green-platform
 ```
 
 Start the local development environment:
